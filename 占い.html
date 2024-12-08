@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <!-- index.html の head 部分を修正 -->
+
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>神様占い</title>
+      <link rel="stylesheet" href="./style.css" />
+    </head>
+  </head>
+
+  <body>
+    <div class="video-background">
+      <video autoplay muted loop playsinline>
+        <source
+          src="/Users/ogawakonan/Downloads/占いアプリ/神様の画像/215697_small.mp4"
+          type="video/mp4"
+        />
+      </video>
+    </div>
+    <div class="overlay"></div>
+    <div class="container">
+      <h1>あなたに眠る<br />神様占い</h1>
+      <div class="input-form">
+        <div class="input-group">
+          <label for="birthdate">生年月日</label>
+          <input type="date" id="birthdate" required />
+        </div>
+        <div class="input-group">
+          <label for="gender">性別</label>
+          <select id="gender" required>
+            <option value="">選択してください</option>
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+        <button onclick="getFortune()">占いを見る</button>
+      </div>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      // 神様データベース（サンプル版 - テスト用に4柱のみ実装）
+      const gods = [
+        {
+          id: 1,
+          imagePath:
+            "/Users/ogawakonan/Downloads/占いアプリ/神様の画像/天照.jpg",
+          name: "天照大御神",
+          personality:
+            "屈折したことを好まず、正義感に満ち溢れているのがあなたです。人情を重んじており、協調性もあります。それも力の限り助けになろうとするゆえ、周りから非常に頼りにされているはずです。困っている人を放っておくなど、とてもできません。親友に対しては、まるで自分の問題でもあるかのように、親身になり解決しようとするでしょう。そういう優しさが、周りの人の心をも動かしてしまうのです。そしてあなたには、迷いが一切ありません。どんな時でも状況に合わせてうまく対応できますし、決断もできます。さらには、つらい状況に陥っても、笑顔を絶やさずみんなの心を明るくします。周りからすると、そういうあなたはとても頼もしい存在ですね。",
+          desire:
+            "困っている人がいれば、考えるよりも先に、何かをやってあげているあなた。行動力もあり、考え方が真っ直ぐなため、一度助けようと思ってしまうと、自分のことも後回し、周囲の人が止めても引き下がらない頑固な一面を見せることもあるのでしょう。もっともそれは、あなたの潜在意識の中に、人に慕われたいという強い欲求があるから。そのため、何が何でも人のために尽くさねばならないという衝動が生まれてしまうのです。その意識があるために、あなたの人間力はより豊かなものになり、責任感や信頼感にも繋がっていくのでしょう。あなたが力をつけることで、より自由に行動できるようにもなってきますから、あなたに救われる人たちもこれからどんどん増えていくはずです。",
+          love:
+            "あなたは自由を愛し、束縛を嫌う天真爛漫な人物だと言えます。頭に思い浮かんだアイデアは実行に移さないと気が済まないタイプであり、恋愛においても、好きな人ができたら素直にアプローチを仕かけるようですね。また、あまり難しい駆け引きは得意ではないため、ストレートに愛情表現をしてくれるような素直さを持つ異性に心を惹かれます。あれこれと取り繕ったり、過剰な演出をしたりする相手よりも、飾らずに気持ちを伝えてくれる相手に魅力を感じるのです。束縛されるのを嫌うあなたではありますが、決して気が多いタイプではないため、恋人としても一緒にいて安心感があるでしょう。趣味や仕事に対する価値観を認めてもらえる限りは、あなたも居心地の良さを感じて、その相手を大切にしようとするはずです。",
+          relationship:
+            "あなたは少々移り気な人なのですね。しかしそのアップダウンの激しさも、天才型の性質から来るものであると周囲に理解され、受け入れられています。そんなあなたは、自由でのびやかな対人運に恵まれるでしょう。あなたの才能に惹かれる多くの人が自由に出入りします。その場にいないことで陰口を言われるような不安がないのは、あなたがいい意味で他者への興味が希薄だからなのかもしれません。あなたの人間関係は、感性によってのみ結ばれるのですよ。肩書きが立派だとか誰それの知り合いであるなどの表面的な部分ではなく、それぞれのキャラクターや感受性に魅力を感じる相手だけを選びますし、あなたを選ぶのも、そうした純粋な目を持つ人たちでしょう。",
+          talent:
+            "他人や常識に縛られず、自分の思いを形に変えていくような仕事で活躍できるのがあなたの特徴ですね。センスの良さも人並みを外れていますし、ひらめきの才能にも恵まれています。",
+          improvement:
+            "日の出とともに行動を始めることで運気が上昇します。太陽の光を浴びる時間を増やすことで、エネルギーが満ちてきます。",
+        },
+        {
+          id: 2,
+          imagePath:
+            "/Users/ogawakonan/Downloads/占いアプリ/神様の画像/generated.jpg",
+          name: "月読命",
+          personality:
+            "静かで思慮深く、直感力に優れています。夜の静けさのように落ち着いた雰囲気を持っています。",
+          desire:
+            "心の深層を探求したい、精神的な成長を遂げたいという願望があります。",
+          love:
+            "神秘的な魅力で相手を引き付けます。精神的なつながりを重視する恋愛を好みます。",
+          relationship:
+            "少数の深い付き合いを大切にします。相手の心の機微を理解する力に優れています。",
+          talent: "芸術や文学、心理学などの分野で才能を発揮します。",
+          improvement:
+            "月の満ち欠けに注目し、新月の日に新しいことを始めると良いでしょう。",
+        },
+        {
+          id: 3,
+          imagePath: "",
+          name: "須佐之男命",
+          personality:
+            "情熱的で行動力があり、困難に立ち向かう勇気を持っています。",
+          desire:
+            "新しい挑戦や冒険への強い欲求があります。変革を起こしたい願望を秘めています。",
+          love:
+            "激しい感情表現と深い愛情を持ち合わせています。相手を全力で守る傾向があります。",
+          relationship:
+            "正義感が強く、弱者を守る傾向があります。時に激しい気性を見せることもあります。",
+          talent: "危機管理能力が高く、困難な状況を打開する才能があります。",
+          improvement:
+            "激しい運動や新しい挑戦をすることで、エネルギーを正しい方向に導けます。",
+        },
+        {
+          id: 4,
+          imagePath: "",
+          name: "稲荷神",
+          personality: "賢明で商才に長け、先を見通す力を持っています。",
+          desire: "富と繁栄を追求する願望があり、経済的な成功を重視します。",
+          love: "実利的な面もありますが、縁を大切にする心を持っています。",
+          relationship: "信頼関係を重視し、互いの利益になる関係を築きます。",
+          talent: "ビジネスセンスが優れており、商売の才能があります。",
+          improvement: "朝一番に神社を参拝することで、商売運が上昇します。",
+        },
+      ];
+
+      function getFortune() {
+        const birthdate = document.getElementById("birthdate").value;
+        const gender = document.getElementById("gender").value;
+
+        if (!birthdate || !gender) {
+          alert("生年月日と性別を入力してください。");
+          return;
+        }
+
+        // 生年月日から神様を決定する（シンプルな計算方式）
+        const dateObj = new Date(birthdate);
+        const day = dateObj.getDate();
+        const month = dateObj.getMonth() + 1;
+
+        // テスト用に4柱の中から選択（0～3のインデックス）
+        const index = (day + month) % 4;
+        const selectedGod = gods[index];
+
+        // デバッグ用のコンソール出力
+        console.log("Selected index:", index);
+        console.log("Selected god:", selectedGod);
+
+        // 結果の表示
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+        resultDiv.innerHTML = `
+                <img src="${selectedGod.imagePath}" alt="${selectedGod.name}" class="god-image">
+                <h2 class="god-name">あなたに眠る神様: ${selectedGod.name}</h2>
+                <div class="result-item">
+                    <h3>基本的な性格</h3>
+                    <p>${selectedGod.personality}</p>
+                </div>
+                <div class="result-item">
+                    <h3>潜在的に眠っている欲求</h3>
+                    <p>${selectedGod.desire}</p>
+                </div>
+                <div class="result-item">
+                    <h3>基本的な恋愛傾向</h3>
+                    <p>${selectedGod.love}</p>
+                </div>
+                <div class="result-item">
+                    <h3>対人運・人間関係</h3>
+                    <p>${selectedGod.relationship}</p>
+                </div>
+                <div class="result-item">
+                    <h3>秘めている仕事の才能</h3>
+                    <p>${selectedGod.talent}</p>
+                </div>
+                <div class="result-item">
+                    <h3>運気が上がる方法</h3>
+                    <p>${selectedGod.improvement}</p>
+                </div>
+                <button id="moreFortuneBtn" class="more-fortune-btn">
+                    さらに2025年に願いを叶えたい方はこちら
+                </button>
+            `;
+        // ボタンのイベントリスナーを設定
+        document
+          .getElementById("moreFortuneBtn")
+          .addEventListener("click", openModal);
+      }
+    </script>
+    <!-- Modal -->
+    <div id="fortuneModal" class="modal">
+      <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">×</button>
+        <h3 class="modal-title">運気上昇の神秘儀式</h3>
+        <p class="modal-subtitle">※以下の手順を必ず順番通りに行ってください</p>
+        <div id="ritualContent"></div>
+      </div>
+    </div>
+
+    <script>
+      // rituals の定義を以下のように変更します
+      const rituals = {
+        title: "運気上昇の神秘儀式",
+        steps: [
+          {
+            title: "願い事を一つだけ決める",
+            content:
+              "欲張らないことが重要です。あなたが最も望む願い事をただ一つだけ、心を込めて決めてください。",
+          },
+          {
+            title: "専用アプリをインストール",
+            content:
+              "運気上昇の神秘を高めるための無料アプリをインストールしてください。このアプリを通じて神様とのつながりが強まります。",
+          },
+          {
+            title: "神様を壁紙に設定",
+            content:
+              "あなたの神様の画像を、スマートフォンの壁紙に設定してください。※最低1週間は変更せずにお守りください。これにより、神様の加護が継続的に得られます。",
+          },
+          {
+            title: "願いを神様に届ける",
+            content:
+              "神様の画像（壁紙）の前で、決めた願い事を心を込めて3回唱えてください。声に出して唱えることで、願いはより強く天に届きます。",
+          },
+        ],
+      };
+
+      // openModal 関数を以下のように変更
+      // Modal関連の全ての関数を一箇所にまとめます
+        document.addEventListener('DOMContentLoaded', function () {
+          const modal = document.getElementById('fortuneModal');
+          const closeBtn = document.querySelector('.close-modal');
+
+          function openModal() {
+            let ritualHtml = '';
+            rituals.steps.forEach((step, index) => {
+              ritualHtml += `
+                <div class="ritual-step">
+                    <h4>Step ${index + 1}: ${step.title}</h4>
+                    <p>${step.content}</p>
+                </div>
+            `;
+            });
+
+            document.getElementById('ritualContent').innerHTML = ritualHtml;
+            modal.style.display = 'block';
+          }
+
+          function closeModal() {
+            modal.style.display = 'none';
+          }
+
+          // 閉じるボタンのイベントリスナー
+          if (closeBtn) {
+            closeBtn.addEventListener('click', closeModal);
+          }
+
+          // モーダル外クリックで閉じる
+          window.addEventListener('click', function (event) {
+            if (event.target == modal) {
+              closeModal();
+            }
+          });
+
+          // グローバルスコープで使えるように設定
+          window.openModal = openModal;
+          window.closeModal = closeModal;
+        });
+    </script>
+  </body>
+</html>
