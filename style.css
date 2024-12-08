@@ -141,7 +141,7 @@ button:hover {
   display: none;
   margin-top: 2rem;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1)!important;
   border-radius: 15px;
   backdrop-filter: blur(10px);
   animation: fadeIn 1s ease;
@@ -183,7 +183,7 @@ button:hover {
 .result-item {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05)!important;
   border-radius: 10px;
 }
 
