@@ -141,7 +141,7 @@ button:hover {
   display: none;
   margin-top: 2rem;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1)!important;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
   animation: fadeIn 1s ease;
@@ -183,7 +183,7 @@ button:hover {
 .result-item {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05)!important;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
 }
 
@@ -312,4 +312,69 @@ button:hover {
   width: 2px;
   height: 1rem;
   background: linear-gradient(to bottom, #ffd700, transparent);
+}
+
+/* iOS Safariでのblurエフェクト対応 */
+.container, #result, .modal-content {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+/* iOSでの日付入力フィールドのスタイリング */
+input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 44px; /* タップしやすいサイズ */
+    font-size: 16px; /* iOSで自動ズームを防ぐ */
+}
+
+/* iOSでの選択フィールドのスタイリング */
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 44px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    padding-right: 30px; /* 矢印アイコンのスペース */
+}
+
+/* iOSでのスムーズスクロール */
+html, body {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* iOSでのモーダル表示 */
+.modal {
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-content {
+    position: relative;
+    margin: env(safe-area-inset-top) auto;  /* iPhoneのノッチ対応 */
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* タッチ操作の最適化 */
+button, select, input[type="date"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* Safari特有のスタイル修正 */
+@supports (-webkit-touch-callout: none) {
+    .container {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    input[type="date"],
+    select {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
 }
