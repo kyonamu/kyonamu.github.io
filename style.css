@@ -411,3 +411,51 @@ body div#result .result-item {
         background-color: rgba(255, 255, 255, 0.1) !important;
     }
 }
+
+/* フォーム入力関連のスタイル */
+input[type="date"],
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.8); /* 背景を明るく */
+    color: #000 !important; /* テキストを黒に */
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* iOSの入力フォーム用 */
+@supports (-webkit-touch-callout: none) {
+    input[type="date"],
+    select {
+        color: #000 !important;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* セレクトボックスのオプション */
+    select option {
+        background-color: #fff;
+        color: #000;
+    }
+    
+    /* 日付入力の各部分 */
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+    input[type="date"]::-webkit-datetime-edit-text,
+    input[type="date"]::-webkit-datetime-edit-month-field,
+    input[type="date"]::-webkit-datetime-edit-day-field,
+    input[type="date"]::-webkit-datetime-edit-year-field {
+        color: #000;
+    }
+}
+
+/* フォーカス時のスタイル */
+input[type="date"]:focus,
+select:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    background: #fff;
+    color: #000 !important;
+}
